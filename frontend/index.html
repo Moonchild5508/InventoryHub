@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>InventoryHub</title>
+    <script>
+        async function loadInventory() {
+            const response = await fetch('/inventory');
+            const data = await response.json();
+            const list = document.getElementById('inventoryList');
+            list.innerHTML = '';
+            data.data.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.name + ' (' + item.quantity + ')';
+                list.appendChild(li);
+            });
+        }
+
+        async function addItem() {
+            const name = document.getElementById('itemName').value;
+            const quantity = parseInt(document.getElementById('itemQuantity').value);
+            await fetch('/inventory', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({name, quantity})
+            });
+            loadInventory();
+        }
+
+        window.onload = loadInventory;
+    </script>
+</head>
+<body>
+    <h1>InventoryHub</h1>
+    <ul id="inventoryList"></ul>
+    <input type="text" id="itemName" placeholder="Item Name">
+    <input type="number" id="itemQuantity" placeholder="Quantity">
+    <button onclick="addItem()">Add Item</button>
+</body>
+</html>
